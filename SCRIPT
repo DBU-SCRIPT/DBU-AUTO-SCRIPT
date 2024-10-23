@@ -1,0 +1,29 @@
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
+
+-- Replace with your server's URL
+local url = "http://localhost:3000/send"  
+
+-- Function to send the username
+local function sendUsername(player)
+	local username = player.Name
+	local data = { username = username }
+
+	local jsonData = HttpService:JSONEncode(data)
+
+	-- Sending POST request to the server
+	local success, response = pcall(function()
+		return HttpService:PostAsync(url, jsonData, Enum.HttpContentType.ApplicationJson)
+	end)
+
+	if success then
+		print("Username sent successfully: " .. response)
+	else
+		warn("Failed to send username: " .. response)
+	end
+end
+
+-- Connect the function to when a player joins
+Players.PlayerAdded:Connect(function(player)
+	sendUsername(player)
+end)
